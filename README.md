@@ -23,6 +23,7 @@ jittery networks.  Yay!
 
 ## 2015-04-30
 
+- More reasonable flapping timing.
 - Added documentation via `--help`, `-h`, or `help`.
 - Exit earlier if the initial connection fails.
 - Added the `--screen-cmd` and `--no-screen-cmd` options for those that

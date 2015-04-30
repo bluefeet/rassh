@@ -58,10 +58,11 @@ while (1) {
         die "rassh: Failed to reconnect, exiting.\n";
     }
 
-    warn "rassh: Error received from SSH connection, reconnecting...\n";
+    warn "rassh: Error received from SSH connection.\n";
+    warn "rassh: Sleeping for $retry_sleep seconds and then reconnecting...\n";
     $retry_count ++;
     sleep $retry_sleep;
-    $retry_sleep *= 2;
+    $retry_sleep++;
 }
 
 exit 0;
