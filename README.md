@@ -2,8 +2,8 @@
 
 At @work we have some remote developers that were tired of dealing with lost
 SSH connections.  We looked into [mosh](https://mosh.mit.edu/) but had some
-security concerns, so in the interim I thought some vanilla SSH+screen might
-do the job.  This is the result.
+security concerns (nothing in particular, mosh is awesome), so in the interim
+I thought some vanilla SSH+screen might do the job.  This is the result.
 
 rassh is pretty simple.  It executes ssh, telling it to run screen on the
 remote host when connected.  A symlink is made from `~/.ssh/rassh_auth_socket`
@@ -32,8 +32,7 @@ jittery networks.  Yay!
 # Contributing
 
 To contribute to rassh you can open [an issue](https://github.com/bluefeet/rassh/issues)
-or [make a fork](https://github.com/bluefeet/rassh#fork-destination-box)
-and submit a pull request.
+or [make a fork](https://github.com/bluefeet/rassh) and submit a pull request.
 
 # License
 
