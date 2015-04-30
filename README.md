@@ -29,6 +29,12 @@ jittery networks.  Yay!
   don't like the default `bash --login`.
 - Began spreading rassh!
 
+# Contributing
+
+To contribute to rassh you can open [an issue](https://github.com/bluefeet/rassh/issues)
+or [make a fork](https://github.com/bluefeet/rassh#fork-destination-box)
+and submit a pull request.
+
 # License
 
 The MIT License (MIT)
