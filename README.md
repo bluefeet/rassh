@@ -7,13 +7,13 @@ do the job.  This is the result.
 
 rassh is pretty simple.  It executes ssh, telling it to run screen on the
 remote host when connected.  A symlink is made from `~/.ssh/rassh_auth_socket`
-to wherever the real auth socket is.  This symlink is maintaned between
+to wherever the real auth socket is.  This symlink is maintained between
 disconnects so agent forwarding should keep working.
 
 Simply:
 
 ```
-ssh foo.example.com
+rassh foo.example.com
 ```
 
 And you'll now have a login session on the remote host that will survive
