@@ -19,6 +19,12 @@ rassh foo.example.com
 And you'll now have a login session on the remote host that will survive
 jittery networks.  Yay!
 
+# Installaion
+
+Just copy the `rassh` standalone script to some location such as `~/bin` or
+`/usr/bin`.  rassh requires perl and ssh.  The remote system must have
+screen installed.
+
 # Changes
 
 ## 2015-04-30
