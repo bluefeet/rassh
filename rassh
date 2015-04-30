@@ -1,0 +1,43 @@
+#!/usr/bin/env perl
+use strictures 1;
+
+# rassh - Re-Animated SSH
+#
+# usage: rassh ssh_options
+#
+# At a minimum specify the hostname to connect to.
+#
+# Do not specify a command to run - rassh is purely for making a login session
+# as it appends its own commands to make a persistent screen session which
+# automatically survives disconnects and maintains SSH agent forwarding.
+
+my $max_retries = 10;
+my $retry_count = 0;
+my $retry_sleep = 1;
+my $connect_start = 0;
+my $retry_window = 60;
+
+my $command = q[
+  test "$SSH_AUTH_SOCK" && ln -sf $SSH_AUTH_SOCK ~/.ssh/rassh_auth_sock;
+  test "$SSH_AUTH_SOCK" && export SSH_AUTH_SOCK=~/.ssh/rassh_auth_sock;
+  screen -r rassh || screen -S rassh bash --login;
+];
+
+while (1) {
+  $connect_start = time();
+  last if system( 'ssh', '-t', @ARGV, $command ) == 0;
+
+  if (time() > $connect_start + $retry_window) {
+    $retry_count = 0;
+    $retry_sleep = 1;
+  }
+  elsif ($retry_count > $max_retries) {
+    print STDERR "rassh: Failed to reconnect, exiting.\n";
+    exit 1;
+  }
+
+  print STDERR "rassh: Error received from SSH connection, reconnecting...\n";
+  $retry_count ++;
+  sleep $retry_sleep;
+  $retry_sleep *= 2;
+}
