@@ -10,18 +10,18 @@ use Getopt::Long;
 use Pod::Usage qw( pod2usage );
 
 Getopt::Long::Configure(qw(
-  pass_through
+    pass_through
 ));
 
 GetOptions(
-  'help|h'        => \my $help,
-  'screen-cmd=s'  => \my $screen_cmd,
-  'no-screen-cmd' => \my $no_screen_cmd,
+    'help|h'        => \my $help,
+    'screen-cmd=s'  => \my $screen_cmd,
+    'no-screen-cmd' => \my $no_screen_cmd,
 ) or die "rassh: Unable to process options!\n";
 
 if ($help or (@ARGV and defined($ARGV[0]) and $ARGV[0] eq 'help')) {
-  pod2usage( -verbose => 2 );
-  exit 0;
+    pod2usage( -verbose => 2 );
+    exit 0;
 }
 
 $screen_cmd = 'bash --login' if !defined($screen_cmd);
@@ -37,31 +37,31 @@ my $connect_start = 0;
 my $retry_window = 60;
 
 my $command = q[
-  test "$SSH_AUTH_SOCK" && ln -sf $SSH_AUTH_SOCK ~/.ssh/rassh_auth_sock;
-  test "$SSH_AUTH_SOCK" && export SSH_AUTH_SOCK=~/.ssh/rassh_auth_sock;
-  screen -r rassh || screen -S rassh ] . $screen_cmd . q[;
+    test "$SSH_AUTH_SOCK" && ln -sf $SSH_AUTH_SOCK ~/.ssh/rassh_auth_sock;
+    test "$SSH_AUTH_SOCK" && export SSH_AUTH_SOCK=~/.ssh/rassh_auth_sock;
+    screen -r rassh || screen -S rassh ] . $screen_cmd . q[;
 ];
 
 while (1) {
-  $connect_start = time();
-  last if system( 'ssh', '-t', @ARGV, $command ) == 0;
+    $connect_start = time();
+    last if system( 'ssh', '-t', @ARGV, $command ) == 0;
 
-  if (time() <= $start_time + $start_time_window) {
-    die "rassh: Error connecting, exiting.\n";
-  }
+    if (time() <= $start_time + $start_time_window) {
+        die "rassh: Error connecting, exiting.\n";
+    }
 
-  if (time() > $connect_start + $retry_window) {
-    $retry_count = 0;
-    $retry_sleep = 1;
-  }
-  elsif ($retry_count > $max_retries) {
-    die "rassh: Failed to reconnect, exiting.\n";
-  }
+    if (time() > $connect_start + $retry_window) {
+        $retry_count = 0;
+        $retry_sleep = 1;
+    }
+    elsif ($retry_count > $max_retries) {
+        die "rassh: Failed to reconnect, exiting.\n";
+    }
 
-  warn "rassh: Error received from SSH connection, reconnecting...\n";
-  $retry_count ++;
-  sleep $retry_sleep;
-  $retry_sleep *= 2;
+    warn "rassh: Error received from SSH connection, reconnecting...\n";
+    $retry_count ++;
+    sleep $retry_sleep;
+    $retry_sleep *= 2;
 }
 
 exit 0;
@@ -73,8 +73,8 @@ rassh - Re-Animated SSH
 
 =head1 USAGE
 
-  rassh [--screen-cmd=cmd|--no-screen-cmd] ssh_options
-  rassh --help
+    rassh [--screen-cmd=cmd|--no-screen-cmd] ssh_options
+    rassh --help
 
 =head1 OPTIONS
 
@@ -82,21 +82,21 @@ Any options not recognized by rassh will be automatically passed to the
 underlying C<ssh> invocation.  At a minimum you'll want to specify the
 hostname to connect to, such as:
 
-  rassh foobar.example.com
+    rassh foobar.example.com
 
 You can specify any C<ssh> options you want.  But, do not specify a command
 to execute as this is where rassh operates.
 
 =head2 screen-cmd
 
-  --screen-cmd='sh -l'
+    --screen-cmd='sh -l'
 
 Use this to specify the command that screen will execute when there is
 no rassh screen to connect to.  This defaults to C<bash --login>.
 
 =head2 no-screen-cmd
 
-  --no-screen-cmd
+    --no-screen-cmd
 
 Set this is you don't want screen to execute a particular command.  This
 is useful if you like the defaults, or you have something special happening
@@ -104,7 +104,7 @@ in your C<~/.screenrc> on the remote host.
 
 =head2 help
 
-  --help
+    --help
 
 Shows this fancy help!
 
