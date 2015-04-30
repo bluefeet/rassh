@@ -25,6 +25,12 @@ Just copy the `rassh` standalone script to some location such as `~/bin` or
 `/usr/bin`.  rassh requires perl and ssh.  The remote system must have
 screen installed.
 
+# Alternatives
+
+- [mosh](https://mosh.mit.edu/)
+- [autossh](http://www.harding.motd.ca/autossh/)
+- [autossh + tmux = smux](https://coderwall.com/p/aohfrg/smux-ssh-with-auto-reconnect-tmux-a-mosh-replacement)
+
 # Changes
 
 ## 2015-04-30
