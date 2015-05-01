@@ -19,6 +19,15 @@ rassh foo.example.com
 And you'll now have a login session on the remote host that will survive
 jittery networks.  Yay!
 
+# Documentation
+
+Various command line options are available to customize rassh' behavior.  They can
+be found with:
+
+```
+rassh help
+```
+
 # Installaion
 
 Just copy the `rassh` standalone script to some location such as `~/bin` or
@@ -32,6 +41,10 @@ screen installed.
 - [autossh + tmux = smux](https://coderwall.com/p/aohfrg/smux-ssh-with-auto-reconnect-tmux-a-mosh-replacement)
 
 # Changes
+
+## 2015-05-01
+
+- Added the `--sleep=` and `--retries=` options.
 
 ## 2015-04-30
 

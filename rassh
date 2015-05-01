@@ -14,9 +14,11 @@ Getopt::Long::Configure(qw(
 ));
 
 GetOptions(
-    'help|h'        => \my $help,
-    'screen-cmd=s'  => \my $screen_cmd,
-    'no-screen-cmd' => \my $no_screen_cmd,
+    'help|h'         => \my $help,
+    'screen-cmd=s'   => \my $screen_cmd,
+    'no-screen-cmd'  => \my $no_screen_cmd,
+    'retries=i'      => \my $max_retries,
+    'sleep=i'        => \my $retry_sleep,
 ) or die "rassh: Unable to process options!\n";
 
 if ($help or (@ARGV and defined($ARGV[0]) and $ARGV[0] eq 'help')) {
@@ -27,14 +29,14 @@ if ($help or (@ARGV and defined($ARGV[0]) and $ARGV[0] eq 'help')) {
 $screen_cmd = 'bash --login' if !defined($screen_cmd);
 $screen_cmd = '' if $no_screen_cmd;
 
-my $start_time = time();
-my $start_time_window = 5;
+$max_retries = 20 if !defined $max_retries;
+$retry_sleep =  5 if !defined $retry_sleep;
 
-my $max_retries = 10;
-my $retry_count = 0;
-my $retry_sleep = 1;
+my $start_time = time();
+
+my $retry_count   = 0;
 my $connect_start = 0;
-my $retry_window = 60;
+my $retry_window  = 60;
 
 my $command = q[
     test "$SSH_AUTH_SOCK" && ln -sf $SSH_AUTH_SOCK ~/.ssh/rassh_auth_sock;
@@ -46,23 +48,23 @@ while (1) {
     $connect_start = time();
     last if system( 'ssh', '-t', @ARGV, $command ) == 0;
 
-    if (time() <= $start_time + $start_time_window) {
-        die "rassh: Error connecting, exiting.\n";
-    }
-
     if (time() > $connect_start + $retry_window) {
         $retry_count = 0;
-        $retry_sleep = 1;
     }
-    elsif ($retry_count > $max_retries) {
+    elsif ($max_retries > 0 and $retry_count >= $max_retries) {
         die "rassh: Failed to reconnect, exiting.\n";
     }
 
-    warn "rassh: Error received from SSH connection.\n";
-    warn "rassh: Sleeping for $retry_sleep seconds and then reconnecting...\n";
     $retry_count ++;
-    sleep $retry_sleep;
-    $retry_sleep++;
+    warn "rassh: Error received from SSH connection.\n";
+
+    if ($retry_sleep) {
+        warn "rassh: Sleeping for $retry_sleep seconds before retrying connection.\n";
+        sleep $retry_sleep;
+    }
+
+    my $retry_msg = ($max_retries > 0) ? "#$retry_count of $max_retries" : "#$retry_count";
+    warn "rassh: Reconnecting ($retry_msg)...\n";
 }
 
 exit 0;
@@ -74,7 +76,7 @@ rassh - Re-Animated SSH
 
 =head1 USAGE
 
-    rassh [--screen-cmd=cmd|--no-screen-cmd] ssh_options
+    rassh [--screen-cmd=cmd|--no-screen-cmd] [--retries=<max>] [--sleep=<seconds>] ssh_options
     rassh --help
 
 =head1 OPTIONS
@@ -102,6 +104,23 @@ no rassh screen to connect to.  This defaults to C<bash --login>.
 Set this is you don't want screen to execute a particular command.  This
 is useful if you like the defaults, or you have something special happening
 in your C<~/.screenrc> on the remote host.
+
+=head2 retries
+
+    --retries=<max_connection_retries>
+
+Specify the maximum number of connection retries that should be made before
+giving up.  Defaults to C<20>.
+
+Set this to C<0> to disable the maximum and retry forever.
+
+=head2 sleep
+
+    --sleep=<seconds_between_retry>
+
+How many seconds to sleep between connection retries.  Defaults to C<2>.
+
+Set this to C<0> to disable the sleep and retry immediately.
 
 =head2 help
 
